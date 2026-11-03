@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাডমিন কন্ট্রোল প্যানেল - সত্যের পথে নিউজ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto space-y-8">
+        <!-- Top Bar -->
+        <div class="bg-white p-6 rounded-lg shadow flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-800">🛠️ অ্যাডমিন কন্ট্রোল প্যানেল</h1>
+            <a href="index.html" target="_blank" class="text-sm bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">লাইভ সাইট দেখুন</a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 1. Add & Manage Categories -->
+            <div class="bg-white p-6 rounded-lg shadow flex flex-col justify-between">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">ক্যাটাগরি যুক্ত ও ম্যানেজ করুন</h2>
+                    <form id="category-form" class="space-y-4 mb-6">
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">নতুন ক্যাটাগরির নাম</label>
+                            <input type="text" id="newCategory" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700">ক্যাটাগরি সেভ করুন</button>
+                    </form>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-bold text-gray-700 mb-2">বিদ্যমান ক্যাটাগরি সমূহের তালিকা:</h3>
+                    <div id="category-list" class="space-y-2 max-h-48 overflow-y-auto border p-2 rounded-lg bg-gray-50">
+                        <p class="text-xs text-gray-500 text-center">লোড হচ্ছে...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Publish News Form -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">নতুন সংবাদ প্রকাশ করুন</h2>
+                <form id="news-form" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">শিরোনাম</label>
+                        <input type="text" id="title" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">ক্যাটাগরি সিলেক্ট করুন</label>
+                        <select id="category-select" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <option value="">ক্যাটাগরি লোড হচ্ছে...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">ছবির ফাইল</label>
+                        <input type="file" id="imageFile" accept="image/*" required class="w-full px-3 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">বিস্তারিত বিবরণ</label>
+                        <textarea id="content" rows="3" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                    </div>
+                    <button type="submit" id="news-btn" class="w-full bg-red-700 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-800">নিউজ পাবলিশ করুন</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 3. Manage Existing News -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">সকল নিউজ ম্যানেজমেন্ট (ডিলিট)</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 border-b">
+                            <th class="p-3 text-sm">শিরোনাম</th>
+                            <th class="p-3 text-sm">ক্যাটাগরি</th>
+                            <th class="p-3 text-sm">তারিখ</th>
+                            <th class="p-3 text-sm text-center">কার্যক্রম</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-news-list">
+                        <tr><td colspan="4" class="p-4 text-center text-gray-500">লিস্ট লোড হচ্ছে...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyurrvlbHUhrTNXYp3Py05AvqKKtGx4dEmFszs4NxVP1ECq5Zx87h56hEoDDNxA7fYCdw/exec"; // আপনার গুগল স্ক্রিপ্ট ইউআরএল এখানে বসাবেন
+        const IMGBB_API_KEY = "ebd1e5fd2d64108da9bdaf4e1a7ee1d1"; // আপনার ImgBB API Key এখানে বসাবেন
+
+        // Load Categories into Dropdown & Management List
+        function loadCategories() {
+            fetch(SCRIPT_URL + "?action=getCategories")
+                .then(res => res.json())
+                .then(categories => {
+                    const select = document.getElementById("category-select");
+                    const catListDiv = document.getElementById("category-list");
+                    
+                    select.innerHTML = "";
+                    catListDiv.innerHTML = "";
+
+                    if(categories.length === 0) {
+                        select.innerHTML = `<option value="">কোনো ক্যাটাগরি নেই</option>`;
+                        catListDiv.innerHTML = `<p class="text-xs text-gray-500 text-center">কোনো ক্যাটাগরি পাওয়া যায়নি।</p>`;
+                        return;
+                    }
+
+                    categories.forEach(cat => {
+                        select.innerHTML += `<option value="${cat}">${cat}</option>`;
+                        catListDiv.innerHTML += `
+                            <div class="flex justify-between items-center bg-white p-2 border rounded shadow-sm">
+                                <span class="text-sm font-medium text-gray-700">${cat}</span>
+                                <div class="space-x-2">
+                                    <button onclick="editCategory('${cat}')" class="bg-yellow-500 text-white px-2 py-1 rounded text-xs hover:bg-yellow-600">এডিট</button>
+                                    <button onclick="deleteCategory('${cat}')" class="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">ডিলিট</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                });
+        }
+        loadCategories();
+
+        // Load News List for Admin Management
+        function loadAdminNews() {
+            fetch(SCRIPT_URL + "?action=getNews")
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById("admin-news-list");
+                    tbody.innerHTML = "";
+                    if(data.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-500">কোনো নিউজ নেই।</td></tr>`;
+                        return;
+                    }
+                    data.forEach(news => {
+                        tbody.innerHTML += `
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="p-3 text-sm font-medium text-gray-800">${news.title}</td>
+                                <td class="p-3 text-sm text-gray-600">${news.category}</td>
+                                <td class="p-3 text-sm text-gray-500">${news.date}</td>
+                                <td class="p-3 text-sm text-center">
+                                    <button onclick="deleteNews('${news.id}')" class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-700">ডিলিট</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                });
+        }
+        loadAdminNews();
+
+        // Add Category Handler
+        document.getElementById("category-form").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const catName = document.getElementById("newCategory").value;
+            await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "addCategory", categoryName: catName })
+            });
+            alert("সফলভাবে নতুন ক্যাটাগরি যোগ করা হয়েছে!");
+            document.getElementById("category-form").reset();
+            loadCategories();
+        });
+
+        // Edit Category Handler
+        async function editCategory(oldName) {
+            const newName = prompt("ক্যাটাগরিটির নতুন নাম লিখুন:", oldName);
+            if(newName && newName.trim() !== "" && newName !== oldName) {
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "editCategory", oldName: oldName, newName: newName.trim() })
+                });
+                alert("ক্যাটাগরি সফলভাবে আপডেট করা হয়েছে!");
+                loadCategories();
+            }
+        }
+
+        // Delete Category Handler
+        async function deleteCategory(catName) {
+            if(confirm(`আপনি কি নিশ্চিতভাবে "${catName}" ক্যাটাগরি ডিলিট করতে চান?`)) {
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "deleteCategory", categoryName: catName })
+                });
+                alert("ক্যাটাগরি সফলভাবে ডিলিট করা হয়েছে!");
+                loadCategories();
+            }
+        }
+
+        // Publish News Handler
+        document.getElementById("news-form").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById("news-btn");
+            btn.innerText = "আপলোড হচ্ছে...";
+            btn.disabled = true;
+
+            const title = document.getElementById("title").value;
+            const category = document.getElementById("category-select").value;
+            const content = document.getElementById("content").value;
+            const imageFile = document.getElementById("imageFile").files[0];
+
+            const formData = new FormData();
+            formData.append("image", imageFile);
+
+            try {
+                const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
+                const imgResult = await imgRes.json();
+                
+                if(!imgResult.success) {
+                    alert("ছবি আপলোড ব্যর্থ হয়েছে!");
+                    btn.innerText = "নিউজ পাবলিশ করুন";
+                    btn.disabled = false;
+                    return;
+                }
+
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "addNews", title, category, image: imgResult.data.url, content })
+                });
+
+                alert("সফলভাবে নিউজ প্রকাশিত হয়েছে!");
+                document.getElementById("news-form").reset();
+                loadAdminNews();
+            } catch (err) {
+                console.error(err);
+                alert("ত্রুটি ঘটেছে!");
+            } finally {
+                btn.innerText = "নিউজ পাবলিশ করুন";
+                btn.disabled = false;
+            }
+        });
+
+        // Delete News Handler
+        async function deleteNews(id) {
+            if(confirm("আপনি কি নিশ্চিতভাবে এই নিউজটি মুছে ফেলতে চান?")) {
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "deleteNews", id: id })
+                });
+                alert("নিউজটি সফলভাবে ডিলিট করা হয়েছে!");
+                loadAdminNews();
+            }
+        }
+    </script>
+</body>
+</html>

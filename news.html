@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সত্যের পথে নিউজ - Sotyer Pothe News</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Social Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Smooth Fade-in Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-red-700 text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-wide">📰 সত্যের পথে নিউজ</h1>
+            <span class="text-xs bg-red-800 px-3 py-1 rounded-full shadow-inner">সঠিক ও নিরপেক্ষ সংবাদ</span>
+        </div>
+    </header>
+
+    <!-- Dynamic Category Menu Bar -->
+    <nav class="bg-white shadow-sm border-b sticky top-[65px] z-40">
+        <div class="container mx-auto px-4 flex space-x-3 overflow-x-auto py-3 scrollbar-hide" id="category-menu">
+            <!-- Default "All News" button -->
+            <button onclick="filterNews('all', this)" class="category-btn px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition bg-red-700 text-white shadow">সব খবর</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        <div id="news-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <p class="text-gray-500 col-span-3 text-center py-10">সংবাদ লোড হচ্ছে...</p>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-900 text-gray-300 pt-10 pb-6 mt-12 border-t border-gray-800">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <!-- About Section -->
+            <div>
+                <h3 class="text-white text-lg font-bold mb-3 border-l-4 border-red-600 pl-3">সত্যের পথে নিউজ</h3>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    সঠিক, বস্তুনিষ্ঠ এবং সর্বশেষ সংবাদ সবার আগে আপনার কাছে পৌঁছে দিতে আমরা প্রতিশ্রুতিবদ্ধ। সত্যের সন্ধানে আমরা সর্বদা সচেষ্ট।
+                </p>
+            </div>
+
+            <!-- Quick Links / Useful Info -->
+            <div>
+                <h3 class="text-white text-lg font-bold mb-3 border-l-4 border-red-600 pl-3">জরুরি তথ্য</h3>
+                <ul class="text-sm space-y-2 text-gray-400">
+                    <li><a href="#" class="hover:text-red-500 transition">আমাদের সম্পর্কে</a></li>
+                    <li><a href="#" class="hover:text-red-500transition">গোপনীয়তার নীতি (Privacy Policy)</a></li>
+                    <li><a href="#" class="hover:text-red-500 transition">শর্তাবলী</a></li>
+                    <li><a href="#" class="hover:text-red-500 transition">বিজ্ঞাপন দিন</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact & Social Links -->
+            <div>
+                <h3 class="text-white text-lg font-bold mb-3 border-l-4 border-red-600 pl-3">যোগাযোগ ও সোশ্যাল মিডিয়া</h3>
+                <p class="text-sm text-gray-400 mb-3"><i class="fa-solid fa-envelope mr-2 text-red-500"></i> support@sotyerpothenews.com</p>
+                <div class="flex space-x-4 text-xl mt-4">
+                    <a href="https://facebook.com" target="_blank" class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-700 transition shadow"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://youtube.com" target="_blank" class="bg-red-600 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-700 transition shadow"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://twitter.com" target="_blank" class="bg-sky-500 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-sky-600 transition shadow"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="https://whatsapp.com" target="_blank" class="bg-green-600 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-green-700 transition shadow"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-800 pt-4 text-center text-xs text-gray-500">
+            &copy; ২০২৬ সত্যের পথে নিউজ | সর্বস্বত্ব সংরক্ষিত।
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbyurrvlbHUhrTNXYp3Py05AvqKKtGx4dEmFszs4NxVP1ECq5Zx87h56hEoDDNxA7fYCdw/exec"; // আপনার গুগল স্ক্রিপ্ট ইউআরএল এখানে বসাবেন
+        let allNews = [];
+
+        // Load Categories
+        fetch(API_URL + "?action=getCategories")
+            .then(res => res.json())
+            .then(categories => {
+                const menu = document.getElementById("category-menu");
+                categories.forEach(cat => {
+                    menu.innerHTML += `<button onclick="filterNews('${cat}', this)" class="category-btn px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition bg-gray-200 text-gray-700 hover:bg-gray-300">${cat}</button>`;
+                });
+            });
+
+        // Load News
+        fetch(API_URL + "?action=getNews")
+            .then(res => res.json())
+            .then(data => {
+                allNews = data;
+                displayNews(allNews);
+            });
+
+        function displayNews(newsList) {
+            const container = document.getElementById("news-container");
+            container.innerHTML = "";
+            if(newsList.length === 0) {
+                container.innerHTML = "<p class='text-gray-500 col-span-3 text-center py-10'>এই মুহূর্তে কোনো সংবাদ নেই।</p>";
+                return;
+            }
+            newsList.forEach(news => {
+                container.innerHTML += `
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col justify-between hover:shadow-xl transition transform hover:-translate-y-1 animate-fade-in">
+                        <div>
+                            <img src="${news.image}" alt="News Image" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <span class="text-xs bg-red-100 text-red-700 font-semibold px-2 py-1 rounded">${news.category}</span>
+                                <h3 class="text-lg font-bold text-gray-800 mt-2">
+                                    <a href="news-details.html?id=${news.id}" class="hover:text-red-700 transition">${news.title}</a>
+                                </h3>
+                                <p class="text-gray-600 text-sm mt-2 line-clamp-3">${news.content}</p>
+                            </div>
+                        </div>
+                        <div class="p-4 pt-0 text-xs text-gray-400 flex justify-between items-center">
+                            <span>তারিখ: ${news.date}</span>
+                            <a href="news-details.html?id=${news.id}" class="text-red-700 font-semibold hover:underline">বিস্তারিত পড়ুন →</a>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterNews(category, btnElement) {
+            // Active class management for category buttons
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-red-700', 'text-white', 'shadow');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            btnElement.classList.remove('bg-gray-200', 'text-gray-700');
+            btnElement.classList.add('bg-red-700', 'text-white', 'shadow');
+
+            // Filter logic
+            if(category === 'all') {
+                displayNews(allNews);
+            } else {
+                const filtered = allNews.filter(n => n.category === category);
+                displayNews(filtered);
+            }
+        }
+    </script>
+</body>
+</html>

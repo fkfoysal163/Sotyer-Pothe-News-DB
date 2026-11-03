@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সংবাদ বিস্তারিত - সত্যের পথে নিউজ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <header class="bg-red-700 text-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold">📰 সত্যের পথে নিউজ</a>
+            <a href="index.html" class="bg-white text-red-700 px-4 py-2 rounded text-sm font-semibold hover:bg-gray-200">হোম পেজ</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 max-w-3xl">
+        <div id="news-detail-container" class="bg-white p-6 rounded-lg shadow-md">
+            <p class="text-center text-gray-500 py-10">সংবাদ লোড হচ্ছে...</p>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbyurrvlbHUhrTNXYp3Py05AvqKKtGx4dEmFszs4NxVP1ECq5Zx87h56hEoDDNxA7fYCdw/exec";
+        const urlParams = new URLSearchParams(window.location.search);
+        const newsId = urlParams.get('id');
+
+        if (!newsId) {
+            document.getElementById("news-detail-container").innerHTML = "<p class='text-red-500 text-center'>কোনো সংবাদ পাওয়া যায়নি!</p>";
+        } else {
+            fetch(API_URL + "?action=getNews")
+                .then(res => res.json())
+                .then(data => {
+                    const singleNews = data.find(n => String(n.id) === String(newsId));
+                    const container = document.getElementById("news-detail-container");
+
+                    if (!singleNews) {
+                        container.innerHTML = "<p class='text-red-500 text-center'>এই সংবাদটি খুঁজে পাওয়া যায়নি।</p>";
+                        return;
+                    }
+
+                    document.title = singleNews.title + " - সত্যের পথে নিউজ";
+                    container.innerHTML = `
+                        <span class="text-xs bg-red-100 text-red-700 font-semibold px-3 py-1 rounded">${singleNews.category}</span>
+                        <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mt-3 mb-2">${singleNews.title}</h1>
+                        <p class="text-xs text-gray-400 mb-6">প্রকাশের তারিখ: ${singleNews.date}</p>
+                        <img src="${singleNews.image}" alt="News Image" class="w-full h-80 object-cover rounded-lg mb-6 shadow">
+                        <div class="text-gray-700 leading-relaxed whitespace-pre-line text-lg">${singleNews.content}</div>
+                    `;
+                });
+        }
+    </script>
+</body>
+</html>
